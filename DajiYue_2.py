@@ -10,7 +10,7 @@ from CNN import recognize_digits
 
 class DajiYue:
     def __init__(self):
-        self.cap = VideoCapture(0)
+        self.cap = cv2.VideoCapture(0)
         self.cap.set(3, 1280)
         self.ret, self.img = self.cap.read()
         self.frame_count = 0
@@ -44,7 +44,7 @@ class DajiYue:
             audios[audio_path] = sound
         return audios
 
-    def resize(self, image, width=None, height=None, inter=INTER_AREA):
+    def resize(self, image, width=None, height=None, inter=cv2.INTER_AREA):
         (h, w) = image.shape[:2]
         if width is None and height is None:
             return image
@@ -54,26 +54,26 @@ class DajiYue:
         else:
             r = height / float(h)
             dim = (width, int(h * r))
-        resized = resize(image, dim, interpolation=inter)
+        resized = cv2.resize(image, dim, interpolation=inter)
         return resized
 
     def preprocess_image(self, img):
-        img = flip(img, 0)
-        gray = cvtColor(img, COLOR_BGR2GRAY)
-        edges = Canny(gray, 100, 200)
+        img = cv2.flip(img, 0)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(gray, 100, 200)
         kernel = numpy.ones((3, 3), numpy.uint8)
-        closed = morphologyEx(edges, MORPH_CLOSE, kernel, iterations=4)
+        closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel, iterations=4)
         return closed
 
     def find_contours(self, img):
-        contours, _ = findContours(img.copy(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(img.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         digit_images = []
         boxes = []
         yinjies = []
         height, width = img.shape[:2]
 
         for contour in contours:
-            x, y, w, h = boundingRect(contour)
+            x, y, w, h = cv2.boundingRect(contour)
             # 过滤掉不符合要求的轮廓
             if width * 0.05 < x < width * 0.95 and height * 0.05 < y < height * 0.95 and height * 0.04 < h < height * 0.2:
                 side_length = max(w, h)
@@ -115,17 +115,17 @@ class DajiYue:
         for box, test_label, yinjie in zip(boxes, test_labels, yinjies):
             x1, y1, x2, y2 = box
             dot_radius = 5
-            rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
             if yinjie == 20:
-                putText(img, str(test_label), (x1 + 10, y1 - 5), FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, LINE_AA)
+                cv2.putText(img, str(test_label), (x1 + 10, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
                 dot_center = (x1 + 20, y1 - 40)
-                circle(img, dot_center, dot_radius, (0, 0, 255), -1)
+                cv2.circle(img, dot_center, dot_radius, (0, 0, 255), -1)
             elif yinjie == 0:
-                putText(img, str(test_label), (x1 + 10, y1 - 20), FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, LINE_AA)
+                cv2.putText(img, str(test_label), (x1 + 10, y1 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
                 dot_center = (x1 + 20, y1 - 10)
-                circle(img, dot_center, dot_radius, (0, 0, 255), -1)
+                cv2.circle(img, dot_center, dot_radius, (0, 0, 255), -1)
             else:
-                putText(img, str(test_label), (x1 + 10, y1 - 10), FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, LINE_AA)
+                cv2.putText(img, str(test_label), (x1 + 10, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
         return img
 
     def recognize(self, img, updated_quad):
@@ -150,7 +150,7 @@ class DajiYue:
         else:
             startplay = 0
 
-        img = flip(img, 0)
+        img = cv2.flip(img, 0)
         img = self.draw_annotations(img, boxes, test_labels, yinjies)
         return img, startplay
 
@@ -185,15 +185,15 @@ class DajiYue:
         return img
 
     def yueqi(self, img, x1, y2, which):
-        img = cvtColor(img, COLOR_BGR2RGB)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(img.astype(numpy.uint8))
         img = img.convert('RGBA')
         img.alpha_composite(self.images[which], dest=(x1 - 15, y2))
-        img = cvtColor(numpy.array(img), COLOR_RGBA2BGR)
+        img = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGBA2BGR)
         return img
 
     def start_play(self):
-        self.cap = VideoCapture(0)
+        self.cap = cv2.VideoCapture(0)
         self.cap.set(3, 1280)
         with self.stream:
             while True:
@@ -201,7 +201,7 @@ class DajiYue:
                 if not ret:
                     break
 
-                img = flip(img, 1)  # 水平翻转图像
+                img = cv2.flip(img, 1)  # 水平翻转图像
 
                 # 使用findA4模块的find_quadrilaterals函数来检测四边形并获取updated_quad
                 frame1, frame2, updated_quad = find_quadrilaterals(img)
@@ -216,20 +216,20 @@ class DajiYue:
                     frame2 = self.play(frame2)
 
                 # 将frame1的缩略图显示在frame2的左上角
-                small_frame1 = resize(frame1, (0, 0), fx=0.2, fy=0.2)
+                small_frame1 = cv2.resize(frame1, (0, 0), fx=0.2, fy=0.2)
                 small_height, small_width = small_frame1.shape[:2]
                 frame2[0:small_height, 0:small_width] = small_frame1
                 # 显示处理后的frame2
-                imshow("Camera2", frame2)
+                cv2.imshow("Camera2", frame2)
 
                 # 按'q'或ESC键退出
-                if waitKey(1) in [ord('q'), 27]:
+                if cv2.waitKey(1) in [ord('q'), 27]:
                     break
 
         # 释放摄像头资源并关闭所有窗口
         pygame.mixer.quit()
         self.cap.release()
-        destroyAllWindows()
+        cv2.destroyAllWindows()
 
     def audio_callback(self, indata, outdata, frames, time):
         # 如果检测到打击动作
