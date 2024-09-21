@@ -22,7 +22,7 @@
 
 前端平台界面：
 
-![GitHub Logo](代码/主页.png)
+![GitHub Logo](主页.png)
 
 
 ## 使用教程
