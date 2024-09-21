@@ -9,15 +9,15 @@
 
 打击乐器：编钟
 
-![GitHub Logo](代码/编钟GUI背景.png)
+![GitHub Logo](编钟GUI背景.png)
 
 吹奏乐器：陶笛，葫芦丝，埙
 
-![GitHub Logo](代码/陶笛GUI背景.png)
+![GitHub Logo](陶笛GUI背景.png)
 
-![GitHub Logo](代码/葫芦丝GUI背景.png)
+![GitHub Logo](葫芦丝GUI背景.png)
 
-![GitHub Logo](代码/埙GUI背景.png)
+![GitHub Logo](埙GUI背景.png)
 
 
 前端平台界面：
