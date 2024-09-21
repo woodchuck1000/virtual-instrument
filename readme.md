@@ -70,7 +70,7 @@ $ pip install -r requirements.txt
 - 打击乐GUI_2.py , 吹奏乐GUI_2.py : 进行演奏的主GUI程序
 
 
-- DajiYue_2.py , ChuizouYue.py : 演奏程序2.0版本，为两个主GUI的主调用程序
+- DajiYue_2.py , ChuizouYue_2.py : 演奏程序2.0版本，为两个主GUI的主调用程序
 
 
 - 打击乐.py , 吹奏乐.py : 演奏程序1.0历史版本
@@ -79,7 +79,7 @@ $ pip install -r requirements.txt
 - CNN.py , findA4.py : 打击乐的依赖文件，分别为音符识别模块和图像识别模块
 
 
-- shipu.py , result.py: 可以对导入的乐谱文件进行识谱，识别结果保存在result.txt中，用于生成吹奏乐的教程
+- shipu.py , result.txt: 可以对导入的乐谱文件进行识谱，识别结果保存在result.txt中，用于生成吹奏乐的教程
 ```
   如何修改乐谱识别结果：在shipu.py的第7行
   image = cv2.imread('lzlh.png')
